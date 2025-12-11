@@ -1,0 +1,258 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: #fafaf9;
+    min-height: 100vh;
+}
+
+/* Contenedor principal del dashboard */
+.row {
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Título principal */
+.text-center h1 {
+    font-size: 32px;
+    color: #7c2d12;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+/* Cards de estadísticas */
+.col-3 .card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    height: 100%;
+}
+
+.col-3 .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* Borde lateral de color para cada card */
+.col-3:nth-child(2) .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.col-3:nth-child(3) .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.col-3:nth-child(4) .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #7c2d12 0%, #991b1b 100%);
+}
+
+.col-3:nth-child(5) .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #dc2626 0%, #7c2d12 100%);
+}
+
+/* Contenedor de imágenes en cards */
+.card-body .row .col-12 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.card-body .row .col-12 img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    padding: 12px;
+    border-radius: 12px;
+    transition: all 0.3s;
+}
+
+/* Iconos específicos por tipo de card */
+.col-3:nth-child(2) .card-body img {
+    background: rgba(220, 38, 38, 0.1);
+}
+
+.col-3:nth-child(3) .card-body img {
+    background: rgba(251, 191, 36, 0.1);
+}
+
+.col-3:nth-child(4) .card-body img {
+    background: rgba(124, 45, 18, 0.1);
+}
+
+.col-3:nth-child(5) .card-body img {
+    background: rgba(153, 27, 27, 0.1);
+}
+
+/* Títulos de números grandes en cards */
+.card-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #7c2d12;
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+
+/* Subtítulos de cards */
+.card-subtitle {
+    color: #78716c;
+    font-size: 14px;
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+/* Cards de gráficas */
+.col-3.my-2 .card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.3s;
+    border: none;
+    height: 100%;
+    min-height: 350px;
+}
+
+.col-3.my-2 .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* Bordes superiores de color para cards de gráficas */
+.col-3.my-2:nth-child(6) .card {
+    border-top: 3px solid #dc2626;
+}
+
+.col-3.my-2:nth-child(7) .card {
+    border-top: 3px solid #fbbf24;
+}
+
+.col-3.my-2:nth-child(8) .card {
+    border-top: 3px solid #7c2d12;
+}
+
+.col-3.my-2:nth-child(9) .card {
+    border-top: 3px solid #991b1b;
+}
+
+/* Títulos de gráficas */
+.card-body h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #7c2d12;
+    margin-bottom: 20px;
+}
+
+/* Canvas para gráficas */
+canvas {
+    max-width: 100%;
+    height: auto !important;
+}
+
+/* Espaciado entre filas */
+.my-2 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Grid responsivo */
+@media (max-width: 1200px) {
+    .col-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .col-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .text-center h1 {
+        font-size: 24px;
+    }
+    
+    .card-title {
+        font-size: 28px;
+    }
+    
+    .row {
+        padding: 15px;
+    }
+}
+
+/* Animación de entrada para cards */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Estilo para el body del card */
+.card-body {
+    padding: 0;
+}
+
+/* Mejora visual para el texto */
+.text-muted {
+    color: #78716c !important;
+}
+
+/* Efecto hover en imágenes */
+.card-body img:hover {
+    transform: scale(1.1);
+}
+
+/* Sombra suave para las gráficas */
+.card.text-center {
+    background: white;
+}
+
+/* Color de fondo alternativo */
+body {
+    background: linear-gradient(135deg, #fafaf9 0%, #f5f5f4 100%);
+}
