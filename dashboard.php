@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once "funciones.php";
 $totalClientes = obtenerNumeroTotalClientes();
 $totalClientesUltimos30Dias = obtenerNumeroTotalClientesUltimos30Dias();
@@ -323,9 +324,9 @@ $ventasAnioActual = obtenerVentasAnioActualOrganizadasPorMes();
             <li class="submenu-item"> <a href="#" class="submenu-toggle"><i class="fas fa-cog"></i> <span>Configuración</span><i class="fas fa-chevron-down arrow"></i></a>
                 <ul class="submenu">
                     <li><a href="usuarios.php"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-                    <li><a href="nuevo-usuario.php"><i class="fas fa-user-plus"></i> Nuevo Usuario</a></li>
+                    <li><a href="nuevo_usuarios.php"><i class="fas fa-user-plus"></i> Nuevo Usuario</a></li>
                     <li><a href="permisos.php"><i class="fas fa-user-shield"></i> Permisos</a></li>
-                    <li><a href="configuracion-general.php"><i class="fas fa-cog"></i> Config. General</a></li>
+                    
                  </ul>
             </li>
         </ul>
