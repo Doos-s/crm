@@ -1,21 +1,15 @@
 <?php
-// Iniciar sesión y verificar autenticación
+// Iniciar sesión
 session_start();
 
-// Verificar si el usuario está autenticado
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-// Verificar si es administrador
-if ($_SESSION['rol'] !== 'administrador') {
-    header("Location: dashboard.php");
-    exit();
-}
+// Verificar si el usuario está autenticado (opcional, descomentar si lo necesitas)
+// if (!isset($_SESSION['usuario_id'])) {
+//     header("Location: login.php");
+//     exit();
+// }
 
 // Incluir conexión a la base de datos
-require_once 'config/db.php.php';
+require_once '../config/db.php';
 
 $mensaje = '';
 $tipo_mensaje = '';
@@ -150,27 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 14px;
         }
 
-        .alert {
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-
-        .alert.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-
         .form-group {
             margin-bottom: 20px;
         }
@@ -291,6 +264,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-color: #bbb;
         }
 
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 25px;
@@ -401,10 +392,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <i class="fas fa-save"></i>
                     Crear Usuario
                 </button>
-                <a href="gestionar_usuarios.php" class="btn btn-secondary">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
                     <i class="fas fa-times"></i>
-                    Cancelar
-                </a>
+                     Cancelar
+                </button>
             </div>
         </form>
     </div>
@@ -427,7 +418,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const alertSuccess = document.querySelector('.alert.success');
         if (alertSuccess) {
             setTimeout(() => {
-                alertSuccess.style.display = 'none';
+                alertSuccess.style.opacity = '0';
+                alertSuccess.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    alertSuccess.style.display = 'none';
+                }, 500);
             }, 3000);
         }
     </script>

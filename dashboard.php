@@ -353,7 +353,7 @@ $ventasAnioActual = obtenerVentasAnioActualOrganizadasPorMes();
             <li class="submenu-item"> <a href="#" class="submenu-toggle"><i class="fas fa-cog"></i> <span>Configuración</span><i class="fas fa-chevron-down arrow"></i></a>
                 <ul class="submenu">
                     <li><a href="configuracion/usuarios.php"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-                    <li><a href="configuracion/nuevo_usuarios.php"><i class="fas fa-user-plus"></i> Nuevo Usuario</a></li>                                   
+                    <li><a href="configuracion/nuevo_usuario.php"><i class="fas fa-user-plus"></i> Nuevo Usuario</a></li>                                   
                  </ul>
             </li>
             <!-- Botón Cerrar Sesión -->
