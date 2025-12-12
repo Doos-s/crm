@@ -46,8 +46,7 @@ $totalVentasEnOtroPeriodo = totalAcumuladoVentasPorClienteAntesDeUltimoAnio($cli
         .sidebar-logo-icon {
             width: 60px;
             height: 60px;
-            background: rgba(251, 191, 36, 0.2);
-            border-radius: 50%;
+           
             display: flex;
             align-items: center;
             justify-content: center;
@@ -205,7 +204,7 @@ $totalVentasEnOtroPeriodo = totalAcumuladoVentasPorClienteAntesDeUltimoAnio($cli
     <aside class="sidebar">
         <div class="sidebar-logo">
             <div class="sidebar-logo-icon">
-                <img src="./img/logo.png" alt="Logo" onerror="this.style.display='none'">
+                <img src="./img/logocrm.png" alt="Logo" onerror="this.style.display='none'">
             </div>
             <h2>Dashboard</h2>
         </div>

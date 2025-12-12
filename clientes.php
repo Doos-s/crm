@@ -45,12 +45,11 @@ body {
 .sidebar-logo-icon {
     width: 45px;
     height: 45px;
-    background: white;
-    border-radius: 50%;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+   
     padding: 5px;
 }
 
@@ -444,7 +443,7 @@ body {
 <aside class="sidebar">
     <div class="sidebar-logo">
         <div class="sidebar-logo-icon">
-            <img src="./img/logo.png" alt="Logo" onerror="this.style.display='none'">
+            <img src="./img/logocrm.png" alt="Logo" onerror="this.style.display='none'">
         </div>
         <h2>Clientes</h2>
     </div>
@@ -468,18 +467,8 @@ body {
                 <span>Ventas</span>
             </a>
         </li>
-        <li>
-            <a href="reportes.php">
-                <i class="fas fa-chart-bar"></i> 
-                <span>Reportes</span>
-            </a>
-        </li>
-        <li>
-            <a href="configuracion.php">
-                <i class="fas fa-cog"></i> 
-                <span>Configuración</span>
-            </a>
-        </li>
+      
+       
     </ul>
 </aside>
 

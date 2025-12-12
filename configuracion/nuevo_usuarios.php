@@ -1,3 +1,104 @@
+<?php
+// Iniciar sesión y verificar autenticación
+session_start();
+
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Verificar si es administrador
+if ($_SESSION['rol'] !== 'administrador') {
+    header("Location: dashboard.php");
+    exit();
+}
+
+// Incluir conexión a la base de datos
+require_once 'config/db.php.php';
+
+$mensaje = '';
+$tipo_mensaje = '';
+
+// Procesar formulario cuando se envía
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre_usuario = trim($_POST['nombre_usuario']);
+    $correo = trim($_POST['correo']);
+    $password = $_POST['password'];
+    $rol = $_POST['rol'];
+    
+    // Validaciones del lado del servidor
+    $errores = [];
+    
+    if (strlen($nombre_usuario) < 3) {
+        $errores[] = "El nombre de usuario debe tener al menos 3 caracteres";
+    }
+    
+    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+        $errores[] = "El correo electrónico no es válido";
+    }
+    
+    if (strlen($password) < 6) {
+        $errores[] = "La contraseña debe tener al menos 6 caracteres";
+    }
+    
+    if (empty($rol)) {
+        $errores[] = "Debe seleccionar un rol";
+    }
+    
+    // Verificar si el nombre de usuario ya existe
+    if (empty($errores)) {
+        $stmt = $conexion->prepare("SELECT id_usuario FROM usuarios WHERE nombre_usuario = ?");
+        $stmt->bind_param("s", $nombre_usuario);
+        $stmt->execute();
+        if ($stmt->get_result()->num_rows > 0) {
+            $errores[] = "El nombre de usuario ya está en uso";
+        }
+        $stmt->close();
+    }
+    
+    // Verificar si el correo ya existe
+    if (empty($errores)) {
+        $stmt = $conexion->prepare("SELECT id_usuario FROM usuarios WHERE correo = ?");
+        $stmt->bind_param("s", $correo);
+        $stmt->execute();
+        if ($stmt->get_result()->num_rows > 0) {
+            $errores[] = "El correo electrónico ya está registrado";
+        }
+        $stmt->close();
+    }
+    
+    // Si no hay errores, insertar el usuario
+    if (empty($errores)) {
+        // Encriptar la contraseña
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+        
+        // Preparar la consulta
+        $stmt = $conexion->prepare("INSERT INTO usuarios (nombre_usuario, correo, password, rol, fecha_registro) VALUES (?, ?, ?, ?, NOW())");
+        $stmt->bind_param("ssss", $nombre_usuario, $correo, $password_hash, $rol);
+        
+        if ($stmt->execute()) {
+            $mensaje = "Usuario creado exitosamente";
+            $tipo_mensaje = "success";
+            
+            // Limpiar variables después de éxito
+            $nombre_usuario = '';
+            $correo = '';
+            $password = '';
+            $rol = '';
+        } else {
+            $mensaje = "Error al crear el usuario: " . $stmt->error;
+            $tipo_mensaje = "error";
+        }
+        
+        $stmt->close();
+    } else {
+        // Mostrar errores
+        $mensaje = implode("<br>", $errores);
+        $tipo_mensaje = "error";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,7 +115,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: write;
+            background: #f5f5f5;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -49,71 +150,29 @@
             font-size: 14px;
         }
 
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 25px;
-            padding: 15px;
-            background: #dc2626;
+        .alert {
+            padding: 12px 15px;
             border-radius: 8px;
-            color: white;
+            margin-bottom: 20px;
+            display: none;
         }
 
-        .section-header i {
-            font-size: 24px;
-        }
-
-        .section-header .section-info h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .section-header .section-info p {
-            font-size: 13px;
-            margin: 0;
-            opacity: 0.9;
-        }
-
-        .alert-info {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-
-        .alert-info i {
-            color: #ffc107;
-            font-size: 20px;
-            margin-top: 2px;
-        }
-
-        .alert-info-content strong {
-            color: #856404;
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
             display: block;
-            margin-bottom: 3px;
         }
 
-        .alert-info-content p {
-            color: #856404;
-            margin: 0;
-            font-size: 14px;
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
         }
 
         .form-group {
             margin-bottom: 20px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
         }
 
         .form-group label {
@@ -124,16 +183,9 @@
             font-size: 14px;
         }
 
-        .form-group label .required {
+        .form-group label i {
+            margin-right: 5px;
             color: #dc2626;
-            margin-left: 3px;
-        }
-
-        .form-group .help-text {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
-            font-weight: normal;
         }
 
         .input-wrapper {
@@ -178,7 +230,7 @@
         }
 
         .password-toggle:hover {
-            color: #667eea;
+            color: #dc2626;
         }
 
         .info-text {
@@ -215,6 +267,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            text-decoration: none;
         }
 
         .btn-primary {
@@ -238,34 +291,9 @@
             border-color: #bbb;
         }
 
-        .alert {
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-
-        .alert.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-
         @media (max-width: 768px) {
             .container {
                 padding: 25px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
             }
 
             .btn-group {
@@ -281,18 +309,18 @@
 <body>
     <div class="container">
         <div class="form-header">
-            <i class="fas fa-user-plus"></i>
-            <h2>Crear Nuevo Usuario</h2>
+            <h2><i class="fas fa-user-plus"></i> Crear Nuevo Usuario</h2>
             <p>Complete los datos del usuario</p>
         </div>
 
-        <div id="alertMessage" class="alert"></div>
+        <?php if (!empty($mensaje)): ?>
+            <div class="alert <?php echo $tipo_mensaje; ?>">
+                <?php echo $mensaje; ?>
+            </div>
+        <?php endif; ?>
 
-        <form id="formUsuario" method="POST" action="procesar_usuario.php">
+        <form method="POST" action="">
             
-            <!-- ID Usuario (oculto, se genera automáticamente) -->
-            <input type="hidden" name="id_usuario" id="id_usuario">
-
             <!-- Nombre de Usuario -->
             <div class="form-group">
                 <label for="nombre_usuario">
@@ -306,6 +334,7 @@
                     placeholder="Ingrese el nombre de usuario"
                     required
                     maxlength="50"
+                    value="<?php echo isset($nombre_usuario) ? htmlspecialchars($nombre_usuario) : ''; ?>"
                 >
                 <div class="info-text">
                     <i class="fas fa-info-circle"></i>
@@ -325,6 +354,7 @@
                     name="correo" 
                     placeholder="usuario@ejemplo.com"
                     required
+                    value="<?php echo isset($correo) ? htmlspecialchars($correo) : ''; ?>"
                 >
             </div>
 
@@ -359,15 +389,11 @@
                 </label>
                 <select id="rol" name="rol" required>
                     <option value="">Seleccione un rol</option>
-                    <option value="administrador">Administrador</option>
-                    <option value="editor">Editor</option>
-                    <option value="usuario">Usuario</option>
-                    <option value="invitado">Invitado</option>
+                    <option value="administrador" <?php echo (isset($rol) && $rol === 'administrador') ? 'selected' : ''; ?>>Administrador</option>
+                    <option value="gerente" <?php echo (isset($rol) && $rol === 'gerente') ? 'selected' : ''; ?>>Gerente</option>
+                    <option value="agente" <?php echo (isset($rol) && $rol === 'agente') ? 'selected' : ''; ?>>Agente de ventas</option>
                 </select>
             </div>
-
-            <!-- Fecha de Registro (oculto, se genera automáticamente) -->
-            <input type="hidden" name="fecha_registro" id="fecha_registro">
 
             <!-- Botones -->
             <div class="btn-group">
@@ -375,85 +401,34 @@
                     <i class="fas fa-save"></i>
                     Crear Usuario
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()">
+                <a href="gestionar_usuarios.php" class="btn btn-secondary">
                     <i class="fas fa-times"></i>
                     Cancelar
-                </button>
+                </a>
             </div>
         </form>
     </div>
 
     <script>
-        // Establecer fecha de registro automática al cargar
-        document.addEventListener('DOMContentLoaded', function() {
-            const fechaActual = new Date().toISOString().slice(0, 19).replace('T', ' ');
-            document.getElementById('fecha_registro').value = fechaActual;
-        });
-
         // Toggle para mostrar/ocultar contraseña
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
 
-        togglePassword.addEventListener('click', function() {
-            const type = passwordInput.type === 'password' ? 'text' : 'password';
-            passwordInput.type = type;
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-
-        // Validación del formulario
-        document.getElementById('formUsuario').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const nombreUsuario = document.getElementById('nombre_usuario').value.trim();
-            const correo = document.getElementById('correo').value.trim();
-            const password = document.getElementById('password').value;
-            const rol = document.getElementById('rol').value;
-            
-            // Validaciones
-            if (nombreUsuario.length < 3) {
-                mostrarAlerta('El nombre de usuario debe tener al menos 3 caracteres', 'error');
-                return;
-            }
-            
-            if (password.length < 6) {
-                mostrarAlerta('La contraseña debe tener al menos 6 caracteres', 'error');
-                return;
-            }
-            
-            if (!rol) {
-                mostrarAlerta('Debe seleccionar un rol', 'error');
-                return;
-            }
-            
-            // Si todo está correcto, enviar el formulario
-            mostrarAlerta('Usuario creado exitosamente', 'success');
-            
-            // Descomentar la siguiente línea para enviar realmente el formulario
-            // this.submit();
-            
-            // Limpiar después de 2 segundos (solo para demo)
-            setTimeout(() => {
-                limpiarFormulario();
-            }, 2000);
-        });
-
-        function mostrarAlerta(mensaje, tipo) {
-            const alerta = document.getElementById('alertMessage');
-            alerta.textContent = mensaje;
-            alerta.className = `alert ${tipo}`;
-            alerta.style.display = 'block';
-            
-            setTimeout(() => {
-                alerta.style.display = 'none';
-            }, 3000);
+        if (togglePassword && passwordInput) {
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.type === 'password' ? 'text' : 'password';
+                passwordInput.type = type;
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
         }
 
-        function limpiarFormulario() {
-            document.getElementById('formUsuario').reset();
-            const fechaActual = new Date().toISOString().slice(0, 19).replace('T', ' ');
-            document.getElementById('fecha_registro').value = fechaActual;
-            document.getElementById('alertMessage').style.display = 'none';
+        // Auto-ocultar mensajes de éxito después de 3 segundos
+        const alertSuccess = document.querySelector('.alert.success');
+        if (alertSuccess) {
+            setTimeout(() => {
+                alertSuccess.style.display = 'none';
+            }, 3000);
         }
     </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agregar Cliente - Estilo Moderno</title>
+    <title>Agregar Cliente</title>
     <style>
         * {
             margin: 0;
@@ -227,7 +227,7 @@
         }
 
         button[type="submit"]::before {
-            content: "💾";
+            content: "";
         }
 
         @media (max-width: 768px) {
@@ -254,9 +254,7 @@
 <body>
 
     <div class="container">
-        <div class="breadcrumb">
-            <a href="#">Dashboard</a> > <a href="#">Clientes</a> > Agregar Cliente
-        </div>
+    
 
         <h1>Agregar Nuevo Cliente</h1>
         <p class="subtitle">Complete el formulario para registrar un nuevo cliente</p>

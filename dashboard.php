@@ -305,6 +305,35 @@ $ventasAnioActual = obtenerVentasAnioActualOrganizadasPorMes();
 .submenu-item.active .arrow {
     transform: rotate(180deg);
 }
+
+
+
+.logout-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 15px;
+    right: 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 12px 15px;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.logout-btn i {
+    font-size: 16px;
+}
     </style>
 </head>
 <body>
@@ -323,12 +352,15 @@ $ventasAnioActual = obtenerVentasAnioActualOrganizadasPorMes();
             <li><a href="reportes.php"><i class="fas fa-chart-bar"></i> <span>Reportes</span></a></li>
             <li class="submenu-item"> <a href="#" class="submenu-toggle"><i class="fas fa-cog"></i> <span>Configuración</span><i class="fas fa-chevron-down arrow"></i></a>
                 <ul class="submenu">
-                    <li><a href="usuarios.php"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-                    <li><a href="nuevo_usuarios.php"><i class="fas fa-user-plus"></i> Nuevo Usuario</a></li>
-                    <li><a href="permisos.php"><i class="fas fa-user-shield"></i> Permisos</a></li>
-                    
+                    <li><a href="configuracion/usuarios.php"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                    <li><a href="configuracion/nuevo_usuarios.php"><i class="fas fa-user-plus"></i> Nuevo Usuario</a></li>                                   
                  </ul>
             </li>
+            <!-- Botón Cerrar Sesión -->
+            <a href="login/logout.php" class="menu-item logout-btn" onclick="return confirm('¿Estás seguro de que deseas cerrar sesión?');">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </a>
         </ul>
     </aside>
 
