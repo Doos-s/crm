@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #bb091eff 0%, #764ba2 100%);
+            background: write;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -32,20 +32,16 @@
         }
 
         .form-header {
-            text-align: center;
             margin-bottom: 30px;
-        }
-
-        .form-header i {
-            font-size: 50px;
-            color: #667eea;
-            margin-bottom: 10px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
         }
 
         .form-header h2 {
             color: #333;
             font-size: 28px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            font-weight: 600;
         }
 
         .form-header p {
@@ -53,8 +49,71 @@
             font-size: 14px;
         }
 
-        .form-group {
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             margin-bottom: 25px;
+            padding: 15px;
+            background: #dc2626;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .section-header i {
+            font-size: 24px;
+        }
+
+        .section-header .section-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .section-header .section-info p {
+            font-size: 13px;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .alert-info {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .alert-info i {
+            color: #ffc107;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .alert-info-content strong {
+            color: #856404;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .alert-info-content p {
+            color: #856404;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
         .form-group label {
@@ -65,9 +124,16 @@
             font-size: 14px;
         }
 
-        .form-group label i {
-            margin-right: 8px;
-            color: #667eea;
+        .form-group label .required {
+            color: #dc2626;
+            margin-left: 3px;
+        }
+
+        .form-group .help-text {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+            font-weight: normal;
         }
 
         .input-wrapper {
@@ -77,27 +143,28 @@
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             font-size: 14px;
             transition: all 0.3s ease;
             outline: none;
+            font-family: inherit;
         }
 
         .form-group input:focus,
         .form-group select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
         }
 
         .form-group select {
             cursor: pointer;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 15px center;
-            padding-right: 40px;
+            background-position: right 12px center;
+            padding-right: 35px;
         }
 
         .password-toggle {
@@ -129,16 +196,18 @@
 
         .btn-group {
             display: flex;
+            justify-content: flex-end;
             gap: 15px;
             margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #f0f0f0;
         }
 
         .btn {
-            flex: 1;
-            padding: 14px 20px;
+            padding: 12px 28px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -149,22 +218,24 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #dc2626;
             color: white;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            background: #b91c1c;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
         }
 
         .btn-secondary {
-            background: #f5f5f5;
+            background: white;
             color: #666;
+            border: 1px solid #ddd;
         }
 
         .btn-secondary:hover {
-            background: #e0e0e0;
+            background: #f9f9f9;
+            border-color: #bbb;
         }
 
         .alert {
@@ -188,13 +259,21 @@
             display: block;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .container {
                 padding: 25px;
             }
 
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
             .btn-group {
                 flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
             }
         }
     </style>
@@ -281,9 +360,9 @@
                 <select id="rol" name="rol" required>
                     <option value="">Seleccione un rol</option>
                     <option value="administrador">Administrador</option>
-                    <option value="gerente">Gerente</option>
-                    <option value="agente de ventas">Agente de ventas</option>
-                    
+                    <option value="editor">Editor</option>
+                    <option value="usuario">Usuario</option>
+                    <option value="invitado">Invitado</option>
                 </select>
             </div>
 
