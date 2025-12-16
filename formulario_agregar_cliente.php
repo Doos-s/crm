@@ -249,6 +249,44 @@
                 justify-content: center;
             }
         }
+        .acciones {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.acciones button {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    font-size: 14px;
+}
+
+.acciones button[type="submit"] {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: #fef3c7;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.acciones button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+}
+
+.btn-volver {
+    background: white;
+    color: #78716c;
+    border: 2px solid #e7e5e4 !important;
+}
+
+.btn-volver:hover {
+    background: #fafaf9;
+    border-color: #d6d3d1 !important;
+    transform: translateY(-2px);
+}
     </style>
 </head>
 <body>
@@ -324,10 +362,10 @@
                 </div>
             </div>
 
-            <div class="acciones">
-               
-                <button type="submit">Guardar Cliente</button>
-            </div>
+           <div class="acciones">
+    <button type="submit">Guardar Cliente</button>
+    <button type="button" onclick="window.location.href='clientes.php'" class="btn-volver">Volver</button>
+</div>
         </form>
     </div>
 

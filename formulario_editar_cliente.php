@@ -98,7 +98,7 @@ $departamentos = obtenerDepartamentos();
         }
 
         .formulario {
-            max-width: 700px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
@@ -106,27 +106,55 @@ $departamentos = obtenerDepartamentos();
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+
         label {
             font-weight: 600;
             color: #444;
             margin-bottom: 5px;
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        input, select {
+        label i {
+            color: #dc2626;
+            font-size: 14px;
+        }
+
+        input, select, textarea {
             width: 100%;
             padding: 10px 12px;
             border-radius: 8px;
             border: 1px solid #ccc;
             font-size: 15px;
-            margin-bottom: 18px;
             transition: all 0.3s ease;
+            font-family: inherit;
         }
 
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             border-color: #7c2d12;
             outline: none;
             box-shadow: 0 0 4px rgba(124, 45, 18, 0.4);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
         }
 
         .acciones {
@@ -134,36 +162,48 @@ $departamentos = obtenerDepartamentos();
             justify-content: space-between;
             align-items: center;
             margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
         }
 
         button {
             background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
             color: white;
             border: none;
-            padding: 10px 25px;
+            padding: 12px 30px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 600;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         button:hover {
             background: linear-gradient(135deg, #b91c1c 0%, #7c2d12 100%);
-            transform: scale(1.03);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
         }
 
         .btn-volver {
-            background-color: #6c757d;
+            background: #6c757d;
             color: #fff;
-            padding: 10px 25px;
+            padding: 12px 30px;
             border-radius: 8px;
             text-decoration: none;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
         }
 
         .btn-volver:hover {
-            background-color: #5a6268;
-            transform: scale(1.03);
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
         }
 
         @media (max-width: 768px) {
@@ -171,6 +211,9 @@ $departamentos = obtenerDepartamentos();
             .sidebar-logo h2, .sidebar-menu a span { display: none; }
             .main-content { margin-left: 80px; padding: 20px; }
             .formulario { padding: 20px; }
+            .form-row { grid-template-columns: 1fr; }
+            .acciones { flex-direction: column-reverse; gap: 10px; }
+            .acciones button, .acciones a { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -193,28 +236,104 @@ $departamentos = obtenerDepartamentos();
 
     <!-- MAIN -->
     <main class="main-content">
-        <h1>Editar Cliente</h1>
+        <h1><i class="fas fa-user-edit"></i> Editar Cliente</h1>
         <form class="formulario" action="actualizar_cliente.php" method="post">
             <input type="hidden" name="id" value="<?php echo $cliente->id; ?>">
 
-            <label for="nombre">Nombre</label>
-            <input required type="text" name="nombre" id="nombre" value="<?php echo htmlspecialchars($cliente->nombre); ?>">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nombre">
+                        <i class="fas fa-user"></i>
+                        Nombre Completo
+                    </label>
+                    <input required type="text" name="nombre" id="nombre" 
+                           value="<?php echo htmlspecialchars($cliente->nombre); ?>" 
+                           placeholder="Ingrese el nombre completo">
+                </div>
 
-            <label for="edad">Edad</label>
-            <input required type="number" name="edad" id="edad" value="<?php echo htmlspecialchars($cliente->edad); ?>">
+                <div class="form-group">
+                    <label for="edad">
+                        <i class="fas fa-birthday-cake"></i>
+                        Edad
+                    </label>
+                    <input required type="number" name="edad" id="edad" 
+                           value="<?php echo htmlspecialchars($cliente->edad); ?>" 
+                           placeholder="Edad del cliente" min="1" max="120">
+                </div>
+            </div>
 
-            <label for="departamento">Departamento</label>
-            <select name="departamento" id="departamento">
-                <?php foreach ($departamentos as $departamento): ?>
-                    <option value="<?php echo $departamento; ?>" <?php if($cliente->departamento == $departamento) echo "selected"; ?>>
-                        <?php echo $departamento; ?>
-                    </option
-                <?php endforeach; ?>
-            </select>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="telefono">
+                        <i class="fas fa-phone"></i>
+                        Teléfono
+                    </label>
+                   <input required type="tel" name="telefono" id="telefono" 
+       value="<?php echo htmlspecialchars($cliente->telefono ?? ''); ?>" 
+       placeholder="Ej: 987654321">
+
+                </div>
+
+                <div class="form-group">
+                    <label for="correo">
+                        <i class="fas fa-envelope"></i>
+                        Correo Electrónico
+                    </label>
+                    <input required type="email" name="correo" id="correo" 
+       value="<?php echo htmlspecialchars($cliente->correo ?? ''); ?>" 
+       placeholder="correo@ejemplo.com">
+
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group form-group-full">
+                    <label for="direccion">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Dirección
+                    </label>
+                   <textarea name="direccion" id="direccion" 
+          placeholder="Ingrese la dirección completa"><?php 
+    echo htmlspecialchars($cliente->direccion ?? ''); 
+?></textarea>
+
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="departamento">
+                        <i class="fas fa-map"></i>
+                        Departamento
+                    </label>
+                    <select required name="departamento" id="departamento">
+                        <option value="">Seleccione un departamento</option>
+                        <?php foreach ($departamentos as $departamento): ?>
+                            <option value="<?php echo $departamento; ?>" 
+                                    <?php if($cliente->departamento == $departamento) echo "selected"; ?>>
+                                <?php echo $departamento; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha_registro">
+                        <i class="fas fa-calendar"></i>
+                        Fecha de Registro
+                    </label>
+                    <input type="date" name="fecha_registro" id="fecha_registro" 
+                           value="<?php echo htmlspecialchars($cliente->fecha_registro); ?>" readonly>
+                </div>
+            </div>
 
             <div class="acciones">
-                <a href="clientes.php" class="btn-volver">← Volver</a>
-                <button type="submit">Actualizar Cliente</button>
+                <a href="clientes.php" class="btn-volver">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+                <button type="submit">
+                    <i class="fas fa-save"></i> Actualizar Cliente
+                </button>
             </div>
         </form>
     </main>

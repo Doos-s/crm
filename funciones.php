@@ -38,21 +38,33 @@ function agregarCliente($nombre, $edad, $departamento)
     return $sentencia->execute([$nombre, $edad, $departamento, $fechaRegistro]);
 }
 
-function obtenerClientes()
-{
+function obtenerClientes() {
     $bd = obtenerBD();
-    $sentencia = $bd->query("SELECT id, nombre, edad, departamento, fecha_registro FROM clientes");
-    return $sentencia->fetchAll();
+    $sentencia = $bd->query("
+        SELECT id, nombre, edad, telefono, correo, direccion, departamento, fecha_registro 
+        FROM clientes 
+        ORDER BY nombre ASC
+    ");
+    return $sentencia->fetchAll(PDO::FETCH_OBJ);
 }
 
-function buscarClientes($nombre)
-{
+function buscarClientes($busqueda) {
     $bd = obtenerBD();
-    $sentencia = $bd->prepare("SELECT id, nombre, edad, departamento, fecha_registro FROM clientes WHERE nombre LIKE ?");
-    $sentencia->execute(["%$nombre%"]);
-    return $sentencia->fetchAll();
+    $busqueda = trim($busqueda);
+    
+    $busqueda_inicial = $busqueda . "%";
+    
+    $sentencia = $bd->prepare("
+        SELECT id, nombre, edad, telefono, correo, direccion, departamento, fecha_registro 
+        FROM clientes 
+        WHERE nombre LIKE ?
+        ORDER BY nombre ASC
+    ");
+    
+    $sentencia->execute([$busqueda_inicial]);
+    
+    return $sentencia->fetchAll(PDO::FETCH_OBJ);
 }
-
 
 function eliminarCliente($id)
 {
@@ -68,11 +80,14 @@ function obtenerClientePorId($id)
     $sentencia->execute([$id]);
     return $sentencia->fetchObject();
 }
-function actualizarCliente($nombre, $edad, $departamento, $id)
-{
+function actualizarCliente($id, $nombre, $edad, $telefono, $correo, $direccion, $departamento) {
     $bd = obtenerBD();
-    $sentencia = $bd->prepare("UPDATE clientes SET nombre = ?, edad = ?, departamento = ? WHERE id = ?");
-    return $sentencia->execute([$nombre, $edad, $departamento, $id]);
+    $sentencia = $bd->prepare("
+        UPDATE clientes 
+        SET nombre = ?, edad = ?, telefono = ?, correo = ?, direccion = ?, departamento = ? 
+        WHERE id = ?
+    ");
+    return $sentencia->execute([$nombre, $edad, $telefono, $correo, $direccion, $departamento, $id]);
 }
 
 function agregarVenta($idCliente, $monto, $fecha)

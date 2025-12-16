@@ -478,12 +478,7 @@ body {
             <h1><i class="fas fa-users"></i> Clientes</h1>
             <p>Gestión general de clientes registrados en el sistema</p>
         </div>
-        <div class="header-right">
-            <div class="user-profile">
-                <div class="user-avatar">M</div>
-                <span>Administrador</span>
-            </div>
-        </div>
+       
     </div>
 
     <div class="action-bar">
@@ -507,44 +502,50 @@ body {
         </div>
 
         <table id="tablaClientes" class="display">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Departamento</th>
-                    <th>Edad</th>
-                    <th>Fecha de Registro</th>
-                    <th>Dashboard</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($clientes as $cliente) { ?>
-                    <tr>
-                        <td><?php echo $cliente->id; ?></td>
-                        <td><?php echo htmlspecialchars($cliente->nombre); ?></td>
-                        <td><?php echo htmlspecialchars($cliente->departamento); ?></td>
-                        <td><?php echo htmlspecialchars($cliente->edad); ?></td>
-                        <td><?php echo htmlspecialchars($cliente->fecha_registro); ?></td>
-                        <td>
-                            <a class="btn-small btn-edit" href="dashboard_cliente.php?id=<?php echo $cliente->id; ?>">
-                                <i class="fas fa-chart-line"></i> Ver
-                            </a>
-                        </td>
-                        <td>
-                            <a href="formulario_editar_cliente.php?id=<?php echo $cliente->id; ?>" class="btn-small btn-edit">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <a href="eliminar_cliente.php?id=<?php echo $cliente->id; ?>" 
-                               class="btn-small btn-delete" 
-                               onclick="return confirm('¿Estás seguro de eliminar este cliente?');">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </a>
-                        </td>
-                    </tr>
-                <?php } ?>
-            </tbody>
-        </table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Edad</th>
+            <th>Teléfono</th>
+            <th>Correo Electrónico</th>
+            <th>Dirección</th>
+            <th>Departamento</th>
+            <th>Fecha de Registro</th>
+            <th>Dashboard</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($clientes as $cliente) { ?>
+            <tr>
+                <td><?php echo $cliente->id; ?></td>
+                <td><?php echo htmlspecialchars($cliente->nombre); ?></td>
+                <td><?php echo htmlspecialchars($cliente->edad); ?></td>
+                <td><?php echo htmlspecialchars($cliente->telefono); ?></td>
+                <td><?php echo htmlspecialchars($cliente->correo); ?></td>
+                <td><?php echo htmlspecialchars($cliente->direccion); ?></td>
+                <td><?php echo htmlspecialchars($cliente->departamento); ?></td>
+                <td><?php echo htmlspecialchars($cliente->fecha_registro); ?></td>
+                <td>
+                    <a class="btn-small btn-edit" href="dashboard_cliente.php?id=<?php echo $cliente->id; ?>">
+                        <i class="fas fa-chart-line"></i> Ver
+                    </a>
+                </td>
+                <td>
+                    <a href="formulario_editar_cliente.php?id=<?php echo $cliente->id; ?>" class="btn-small btn-edit">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <a href="eliminar_cliente.php?id=<?php echo $cliente->id; ?>" 
+                       class="btn-small btn-delete" 
+                       onclick="return confirm('¿Estás seguro de eliminar este cliente?');">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </a>
+                </td>
+            </tr>
+        <?php } ?>
+    </tbody>
+</table>
     </div>
 </div>
 

@@ -261,22 +261,22 @@ $resultado = $conexion->query($query);
         }
 
         .btn-edit {
-            background: #3b82f6;
+            background: #d3b016ff;
             color: white;
         }
 
         .btn-edit:hover {
-            background: #2563eb;
+            background: #77601cff;
             transform: translateY(-1px);
         }
 
         .btn-delete {
-            background: #ef4444;
+            background: #d22626ff;
             color: white;
         }
 
         .btn-delete:hover {
-            background: #dc2626;
+            background: #530a0aff;
             transform: translateY(-1px);
         }
 

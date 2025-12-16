@@ -1,31 +1,5 @@
 <?php
 
-
-// Mostrar mensaje de error si existe
-$mensaje_error = '';
-if (isset($_SESSION['mensaje_error'])) {
-    $mensaje_error = $_SESSION['mensaje_error'];
-    unset($_SESSION['mensaje_error']);
-}
-?>
-
-<!-- En el HTML del dashboard, después del <body>: -->
-<?php if (!empty($mensaje_error)): ?>
-<div class="alert alert-error" style="position: fixed; top: 20px; right: 20px; z-index: 9999; background: #f8d7da; color: #721c24; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-width: 400px;">
-    <i class="fas fa-exclamation-circle"></i>
-    <?php echo htmlspecialchars($mensaje_error); ?>
-</div>
-<script>
-    setTimeout(() => {
-        const alert = document.querySelector('.alert-error');
-        if (alert) {
-            alert.style.opacity = '0';
-            alert.style.transition = 'opacity 0.5s';
-            setTimeout(() => alert.remove(), 500);
-        }
-    }, 4000);
-</script>
-<?php endif; 
 session_start();
 include_once "funciones.php";
 $totalClientes = obtenerNumeroTotalClientes();
@@ -361,6 +335,96 @@ $ventasAnioActual = obtenerVentasAnioActualOrganizadasPorMes();
 .logout-btn i {
     font-size: 16px;
 }
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.header-icon i {
+    color: white;
+    font-size: 18px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: white;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-profile:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.user-role {
+    font-size: 12px;
+    color: #666;
+    line-height: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .user-info {
+        display: none;
+    }
+    
+    .user-profile {
+        padding: 8px;
+        border-radius: 50%;
+    }
+}
     </style>
 </head>
 <body>
@@ -398,10 +462,41 @@ $ventasAnioActual = obtenerVentasAnioActualOrganizadasPorMes();
     <main class="main-content">
         <div class="dashboard-header">
             <h1>Dashboard General</h1>
-            <div class="header-actions">
-                <div class="header-icon"><i class="fas fa-bell"></i></div>
-                <div class="header-icon"><i class="fas fa-user"></i></div>
-            </div>
+           <div class="header-actions">
+   
+    
+    <!-- Botón de perfil de usuario -->
+    <div class="user-profile">
+        <div class="user-avatar">
+            <?php 
+            // Obtener la inicial del nombre de usuario
+            $inicial = strtoupper(substr($_SESSION['usuario_nombre'], 0, 1));
+            echo $inicial;
+            ?>
+        </div>
+        <div class="user-info">
+            <span class="user-name"><?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></span>
+            <span class="user-role">
+                <?php 
+                $rol = $_SESSION['usuario_rol'];
+                if ($rol === 'administrador') {
+                    echo 'Administrador';
+                } elseif ($rol === 'gerente') {
+                    echo 'Gerente';
+                } elseif ($rol === 'agente') {
+                    echo 'Agente de Ventas';
+                } else {
+                    echo ucfirst($rol);
+                }
+                ?>
+            </span>
+        </div>
+    </div>
+</div>
+
+
+
+
         </div>
 
         <!-- STATS -->
