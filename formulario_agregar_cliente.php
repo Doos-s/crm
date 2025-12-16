@@ -325,7 +325,7 @@
             </div>
 
             <div class="acciones">
-                <a href="clientes.php" class="btn-volver">✕ Cancelar</a>
+               
                 <button type="submit">Guardar Cliente</button>
             </div>
         </form>

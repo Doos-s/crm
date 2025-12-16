@@ -1,11 +1,32 @@
 <?php
-
 session_start();
 
 require_once '../config/db.php';
 
 $mensaje = '';
 $tipo_mensaje = '';
+
+// Verificar si se recibió un ID
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    header("Location: usuarios.php");
+    exit();
+}
+
+$id_usuario = intval($_GET['id']);
+
+// Obtener datos del usuario
+$stmt = $conexion->prepare("SELECT id_usuario, nombre_usuario, correo, rol FROM usuarios WHERE id_usuario = ?");
+$stmt->bind_param("i", $id_usuario);
+$stmt->execute();
+$resultado = $stmt->get_result();
+
+if ($resultado->num_rows === 0) {
+    header("Location: usuarios.php");
+    exit();
+}
+
+$usuario = $resultado->fetch_assoc();
+$stmt->close();
 
 // Procesar formulario cuando se envía
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -25,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errores[] = "El correo electrónico no es válido";
     }
     
-    if (strlen($password) < 6) {
+    if (!empty($password) && strlen($password) < 6) {
         $errores[] = "La contraseña debe tener al menos 6 caracteres";
     }
     
@@ -33,10 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errores[] = "Debe seleccionar un rol";
     }
     
-    // Verificar si el nombre de usuario ya existe
+    // Verificar si el nombre de usuario ya existe (excepto el actual)
     if (empty($errores)) {
-        $stmt = $conexion->prepare("SELECT id_usuario FROM usuarios WHERE nombre_usuario = ?");
-        $stmt->bind_param("s", $nombre_usuario);
+        $stmt = $conexion->prepare("SELECT id_usuario FROM usuarios WHERE nombre_usuario = ? AND id_usuario != ?");
+        $stmt->bind_param("si", $nombre_usuario, $id_usuario);
         $stmt->execute();
         if ($stmt->get_result()->num_rows > 0) {
             $errores[] = "El nombre de usuario ya está en uso";
@@ -44,10 +65,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
     }
     
-    // Verificar si el correo ya existe
+    // Verificar si el correo ya existe (excepto el actual)
     if (empty($errores)) {
-        $stmt = $conexion->prepare("SELECT id_usuario FROM usuarios WHERE correo = ?");
-        $stmt->bind_param("s", $correo);
+        $stmt = $conexion->prepare("SELECT id_usuario FROM usuarios WHERE correo = ? AND id_usuario != ?");
+        $stmt->bind_param("si", $correo, $id_usuario);
         $stmt->execute();
         if ($stmt->get_result()->num_rows > 0) {
             $errores[] = "El correo electrónico ya está registrado";
@@ -55,26 +76,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
     }
     
-    // Si no hay errores, insertar el usuario
+    // Si no hay errores, actualizar el usuario
     if (empty($errores)) {
-        // Encriptar la contraseña
-        $password_hash = password_hash($password, PASSWORD_DEFAULT);
-        
-        // Preparar la consulta
-        $stmt = $conexion->prepare("INSERT INTO usuarios (nombre_usuario, correo, password, rol, fecha_registro) VALUES (?, ?, ?, ?, NOW())");
-        $stmt->bind_param("ssss", $nombre_usuario, $correo, $password_hash, $rol);
+        // Si se proporcionó una nueva contraseña
+        if (!empty($password)) {
+            $password_hash = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $conexion->prepare("UPDATE usuarios SET nombre_usuario = ?, correo = ?, password = ?, rol = ? WHERE id_usuario = ?");
+            $stmt->bind_param("ssssi", $nombre_usuario, $correo, $password_hash, $rol, $id_usuario);
+        } else {
+            // Actualizar sin cambiar la contraseña
+            $stmt = $conexion->prepare("UPDATE usuarios SET nombre_usuario = ?, correo = ?, rol = ? WHERE id_usuario = ?");
+            $stmt->bind_param("sssi", $nombre_usuario, $correo, $rol, $id_usuario);
+        }
         
         if ($stmt->execute()) {
-            $mensaje = "Usuario creado exitosamente";
+            $mensaje = "Usuario actualizado exitosamente";
             $tipo_mensaje = "success";
             
-            // Limpiar variables después de éxito
-            $nombre_usuario = '';
-            $correo = '';
-            $password = '';
-            $rol = '';
+            // Actualizar los datos del usuario en memoria
+            $usuario['nombre_usuario'] = $nombre_usuario;
+            $usuario['correo'] = $correo;
+            $usuario['rol'] = $rol;
         } else {
-            $mensaje = "Error al crear el usuario: " . $stmt->error;
+            $mensaje = "Error al actualizar el usuario: " . $stmt->error;
             $tipo_mensaje = "error";
         }
         
@@ -91,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Nuevo Usuario</title>
+    <title>Editar Usuario</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -135,6 +159,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-header p {
             color: #666;
             font-size: 14px;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info i {
+            color: #dc2626;
+            font-size: 18px;
+        }
+
+        .user-info span {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .user-info strong {
+            color: #333;
         }
 
         .form-group {
@@ -210,6 +258,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .info-text i {
             margin-right: 5px;
             font-size: 10px;
+        }
+
+        .password-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .password-note i {
+            font-size: 16px;
         }
 
         .btn-group {
@@ -293,8 +358,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <div class="form-header">
-            <h2><i class="fas fa-user-plus"></i> Crear Nuevo Usuario</h2>
-            <p>Complete los datos del usuario</p>
+            <h2><i class="fas fa-user-edit"></i> Editar Usuario</h2>
+            <p>Modifique los datos del usuario</p>
+        </div>
+
+        <div class="user-info">
+            <i class="fas fa-id-badge"></i>
+            <span>ID del Usuario: <strong>#<?php echo $usuario['id_usuario']; ?></strong></span>
         </div>
 
         <?php if (!empty($mensaje)): ?>
@@ -318,7 +388,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     placeholder="Ingrese el nombre de usuario"
                     required
                     maxlength="50"
-                    value="<?php echo isset($nombre_usuario) ? htmlspecialchars($nombre_usuario) : ''; ?>"
+                    value="<?php echo htmlspecialchars($usuario['nombre_usuario']); ?>"
                 >
                 <div class="info-text">
                     <i class="fas fa-info-circle"></i>
@@ -338,30 +408,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     name="correo" 
                     placeholder="usuario@ejemplo.com"
                     required
-                    value="<?php echo isset($correo) ? htmlspecialchars($correo) : ''; ?>"
+                    value="<?php echo htmlspecialchars($usuario['correo']); ?>"
                 >
             </div>
 
             <!-- Contraseña -->
+            <div class="password-note">
+                <i class="fas fa-info-circle"></i>
+                <span>Deje este campo vacío si no desea cambiar la contraseña</span>
+            </div>
+
             <div class="form-group">
                 <label for="password">
                     <i class="fas fa-lock"></i>
-                    Contraseña
+                    Nueva Contraseña (Opcional)
                 </label>
                 <div class="input-wrapper">
                     <input 
                         type="password" 
                         id="password" 
                         name="password" 
-                        placeholder="Ingrese una contraseña segura"
-                        required
+                        placeholder="Ingrese nueva contraseña (opcional)"
                         minlength="6"
                     >
                     <i class="fas fa-eye password-toggle" id="togglePassword"></i>
                 </div>
                 <div class="info-text">
                     <i class="fas fa-info-circle"></i>
-                    Mínimo 6 caracteres
+                    Mínimo 6 caracteres si desea cambiarla
                 </div>
             </div>
 
@@ -373,9 +447,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </label>
                 <select id="rol" name="rol" required>
                     <option value=""></option>
-                    <option value="administrador" <?php echo (isset($rol) && $rol === 'administrador') ? 'selected' : ''; ?>>Administrador</option>
-                    <option value="gerente" <?php echo (isset($rol) && $rol === 'gerente') ? 'selected' : ''; ?>>Gerente</option>
-                    <option value="agente" <?php echo (isset($rol) && $rol === 'agente') ? 'selected' : ''; ?>>Agente de ventas</option>
+                    <option value="administrador" <?php echo ($usuario['rol'] === 'administrador') ? 'selected' : ''; ?>>Administrador</option>
+                    <option value="gerente" <?php echo ($usuario['rol'] === 'gerente') ? 'selected' : ''; ?>>Gerente</option>
+                    <option value="agente" <?php echo ($usuario['rol'] === 'agente') ? 'selected' : ''; ?>>Agente de ventas</option>
                 </select>
             </div>
 
@@ -383,12 +457,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i>
-                    Crear Usuario
+                    Guardar Cambios
                 </button>
-               <a href="../configuracion/usuarios.php" class="btn btn-secondary">
-    <i class="fas fa-times"></i>
-    Cancelar
-</a>
+                <a href="../configuracion/usuarios.php" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </a>
             </div>
         </form>
     </div>

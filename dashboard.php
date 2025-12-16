@@ -1,4 +1,31 @@
 <?php
+
+
+// Mostrar mensaje de error si existe
+$mensaje_error = '';
+if (isset($_SESSION['mensaje_error'])) {
+    $mensaje_error = $_SESSION['mensaje_error'];
+    unset($_SESSION['mensaje_error']);
+}
+?>
+
+<!-- En el HTML del dashboard, después del <body>: -->
+<?php if (!empty($mensaje_error)): ?>
+<div class="alert alert-error" style="position: fixed; top: 20px; right: 20px; z-index: 9999; background: #f8d7da; color: #721c24; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-width: 400px;">
+    <i class="fas fa-exclamation-circle"></i>
+    <?php echo htmlspecialchars($mensaje_error); ?>
+</div>
+<script>
+    setTimeout(() => {
+        const alert = document.querySelector('.alert-error');
+        if (alert) {
+            alert.style.opacity = '0';
+            alert.style.transition = 'opacity 0.5s';
+            setTimeout(() => alert.remove(), 500);
+        }
+    }, 4000);
+</script>
+<?php endif; 
 session_start();
 include_once "funciones.php";
 $totalClientes = obtenerNumeroTotalClientes();
@@ -352,10 +379,13 @@ $ventasAnioActual = obtenerVentasAnioActualOrganizadasPorMes();
             <li><a href="reportes.php"><i class="fas fa-chart-bar"></i> <span>Reportes</span></a></li>
             <li class="submenu-item"> <a href="#" class="submenu-toggle"><i class="fas fa-cog"></i> <span>Configuración</span><i class="fas fa-chevron-down arrow"></i></a>
                 <ul class="submenu">
-                    <li><a href="configuracion/usuarios.php"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
-                    <li><a href="configuracion/nuevo_usuario.php"><i class="fas fa-user-plus"></i> Nuevo Usuario</a></li>                                   
+                    <li><a href="configuracion/usuarios.php"><i class="fas fa-users"></i> Usuarios</a></li>                                       
                  </ul>
             </li>
+
+
+
+
             <!-- Botón Cerrar Sesión -->
             <a href="login/logout.php" class="menu-item logout-btn" onclick="return confirm('¿Estás seguro de que deseas cerrar sesión?');">
                 <i class="fas fa-sign-out-alt"></i>
