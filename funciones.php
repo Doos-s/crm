@@ -96,6 +96,55 @@ function agregarVenta($idCliente, $monto, $fecha)
     $sentencia = $bd->prepare("INSERT INTO ventas_clientes(id_cliente, monto, fecha) VALUES (?, ?, ?)");
     return $sentencia->execute([$idCliente, $monto, $fecha]);
 }
+function registrarVenta($idCliente, $monto, $fecha) {
+    return agregarVenta($idCliente, $monto, $fecha);
+}
+function eliminarVenta($id)
+{
+    $bd = obtenerBD();
+    $sentencia = $bd->prepare("DELETE FROM ventas_clientes WHERE id = ?");
+    return $sentencia->execute([$id]);
+}
+
+function obtenerVentas() {
+    $bd = obtenerBD(); 
+    $sentencia = $bd->query("SELECT ventas_clientes.id, ventas_clientes.fecha, ventas_clientes.monto, clientes.nombre as nombre_cliente 
+                             FROM ventas_clientes 
+                             INNER JOIN clientes ON ventas_clientes.id_cliente = clientes.id 
+                             ORDER BY ventas_clientes.fecha DESC");
+    return $sentencia->fetchAll();
+}
+function obtenerVentasPorCliente($id_cliente) {
+    $bd = obtenerBD();
+    $sentencia = $bd->prepare("SELECT ventas_clientes.id, ventas_clientes.fecha, ventas_clientes.monto, clientes.nombre as nombre_cliente 
+                               FROM ventas_clientes 
+                               INNER JOIN clientes ON ventas_clientes.id_cliente = clientes.id 
+                               WHERE ventas_clientes.id_cliente = ? 
+                               ORDER BY ventas_clientes.fecha DESC");
+    $sentencia->execute([$id_cliente]);
+    return $sentencia->fetchAll(); 
+}
+
+function obtenerVentaPorId($id) {
+    $bd = obtenerBD();
+    $sentencia = $bd->prepare("SELECT ventas_clientes.id, ventas_clientes.fecha, ventas_clientes.monto, clientes.nombre as nombre_cliente 
+                               FROM ventas_clientes 
+                               INNER JOIN clientes ON ventas_clientes.id_cliente = clientes.id 
+                               WHERE ventas_clientes.id = ?");
+    $sentencia->execute([$id]);
+    return $sentencia->fetchObject();
+}
+
+function obtenerVentasPorRango($fechaInicio, $fechaFin) {
+    $bd = obtenerBD();
+    $sentencia = $bd->prepare("SELECT ventas_clientes.fecha, ventas_clientes.monto, clientes.nombre 
+                               FROM ventas_clientes 
+                               INNER JOIN clientes ON ventas_clientes.id_cliente = clientes.id 
+                               WHERE ventas_clientes.fecha >= ? AND ventas_clientes.fecha <= ? 
+                               ORDER BY ventas_clientes.fecha DESC");
+    $sentencia->execute([$fechaInicio, $fechaFin]);
+    return $sentencia->fetchAll();
+}
 
 function totalAcumuladoVentasPorCliente($idCliente)
 {
@@ -214,3 +263,4 @@ function obtenerReporteClientesEdades()
     }
     return $resultados;
 }
+
